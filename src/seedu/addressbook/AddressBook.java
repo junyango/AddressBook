@@ -37,7 +37,7 @@ public class AddressBook {
     /**
      * Version info of the program.
      */
-    private static final String VERSION = "AddessBook Level 1 - Version 1.0";
+    private static final String VERSION = "AddressBook Level 1 - Version 1.0";
 
     /**
      * A decorative prefix added to the beginning of lines printed by AddressBook
@@ -58,13 +58,13 @@ public class AddressBook {
      * at which java String.format(...) method can insert values.
      * =========================================================================
      */
-    private static final String MESSAGE_ADDED = "New person added: %1$s, Phone: %2$s, Email: %3$s";
+    private static final String MESSAGE_ADDED = "New person added: %1$s, Phone: %2$s, Email: %3$s, Birthday: %4$s";
     private static final String MESSAGE_ADDRESSBOOK_CLEARED = "Address book has been cleared!";
     private static final String MESSAGE_COMMAND_HELP = "%1$s: %2$s";
     private static final String MESSAGE_COMMAND_HELP_PARAMETERS = "\tParameters: %1$s";
     private static final String MESSAGE_COMMAND_HELP_EXAMPLE = "\tExample: %1$s";
     private static final String MESSAGE_DELETE_PERSON_SUCCESS = "Deleted Person: %1$s";
-    private static final String MESSAGE_DISPLAY_PERSON_DATA = "%1$s  Phone Number: %2$s  Email: %3$s";
+    private static final String MESSAGE_DISPLAY_PERSON_DATA = "%1$s  Phone Number: %2$s  Email: %3$s Birthday: %4$s";
     private static final String MESSAGE_DISPLAY_LIST_ELEMENT_INDEX = "%1$d. ";
     private static final String MESSAGE_GOODBYE = "Exiting Address Book... Good bye!";
     private static final String MESSAGE_INVALID_COMMAND_FORMAT = "Invalid command format: %1$s " + LS + "%2$s";
@@ -91,15 +91,15 @@ public class AddressBook {
 
     private static final String PERSON_STRING_REPRESENTATION = "%1$s " // name
                                                             + PERSON_DATA_PREFIX_PHONE + "%2$s " // phone
-                                                            + PERSON_DATA_PREFIX_EMAIL + "%3$s"  // email
-                                                            + PERSON_DATA_PREFIX_BIRTHDAY + "4$s";// birthday
+                                                            + PERSON_DATA_PREFIX_EMAIL + "%3$s "  // email
+                                                            + PERSON_DATA_PREFIX_BIRTHDAY + "%4$s";// birthday
     private static final String COMMAND_ADD_WORD = "add";
     private static final String COMMAND_ADD_DESC = "Adds a person to the address book.";
     private static final String COMMAND_ADD_PARAMETERS = "NAME "
                                                       + PERSON_DATA_PREFIX_PHONE + "PHONE_NUMBER "
                                                       + PERSON_DATA_PREFIX_EMAIL + "EMAIL "
                                                       + PERSON_DATA_PREFIX_BIRTHDAY + "BIRTHDAY";
-    private static final String COMMAND_ADD_EXAMPLE = COMMAND_ADD_WORD + " John Doe p/98765432 e/johnd@gmail.com b/160695";
+    private static final String COMMAND_ADD_EXAMPLE = COMMAND_ADD_WORD + " John Doe p/98765432 e/johnd@gmail.com b/DDMMYY";
 
     private static final String COMMAND_FIND_WORD = "find";
     private static final String COMMAND_FIND_DESC = "Finds all persons whose names contain any of the specified "
@@ -394,7 +394,7 @@ public class AddressBook {
      * @return  size 2 array; first element is the command type and second element is the arguments string
      */
     private static String[] splitCommandWordAndArgs(String rawUserInput) {
-        final String[] split =  rawUserInput.trim().split("\\s+", 3);
+        final String[] split =  rawUserInput.trim().split("\\s+", 2);
         return split.length == 2 ? split : new String[] { split[0] , "" }; // else case: no parameters
     }
 
@@ -1003,8 +1003,9 @@ public class AddressBook {
         else if(indexOfBirthdayPrefix< indexOfPhonePrefix && indexOfPhonePrefix < indexOfEmailPrefix){
             return removePrefixSign(encoded.substring(indexOfBirthdayPrefix,indexOfPhonePrefix).trim(),PERSON_DATA_PREFIX_BIRTHDAY);
         }
-        else
+        else {
             return null;
+        }
 
     }
 
@@ -1029,13 +1030,14 @@ public class AddressBook {
             return removePrefixSign(encoded.substring(indexOfPhonePrefix, indexOfEmailPrefix).trim(), PERSON_DATA_PREFIX_PHONE);
         }
         else if(indexOfPhonePrefix<indexOfEmailPrefix && indexOfEmailPrefix<indexOfBirthdayPrefix){
-            return removePrefixSign(encoded.substring(indexOfBirthdayPrefix, indexOfEmailPrefix).trim(),PERSON_DATA_PREFIX_PHONE);
+            return removePrefixSign(encoded.substring(indexOfPhonePrefix, indexOfEmailPrefix).trim(),PERSON_DATA_PREFIX_PHONE);
         }
         else if(indexOfPhonePrefix< indexOfBirthdayPrefix && indexOfBirthdayPrefix < indexOfEmailPrefix) {
-            return removePrefixSign(encoded.substring(indexOfBirthdayPrefix, indexOfBirthdayPrefix).trim(), PERSON_DATA_PREFIX_PHONE);
+            return removePrefixSign(encoded.substring(indexOfPhonePrefix, indexOfBirthdayPrefix).trim(), PERSON_DATA_PREFIX_PHONE);
         }
-        else
+        else {
             return null;
+        }
     }
     /**
      * Extracts substring representing email from person string representation
@@ -1061,9 +1063,9 @@ public class AddressBook {
         else if(indexOfEmailPrefix< indexOfBirthdayPrefix && indexOfBirthdayPrefix < indexOfPhonePrefix) {
             return removePrefixSign(encoded.substring(indexOfEmailPrefix, indexOfBirthdayPrefix).trim(), PERSON_DATA_PREFIX_EMAIL);
         }
-        else
+        else {
             return null;
-
+        }
     }
     /**
      * Returns true if the given person's data fields are valid
